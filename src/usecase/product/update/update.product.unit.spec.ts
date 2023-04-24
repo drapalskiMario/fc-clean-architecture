@@ -1,6 +1,4 @@
-import CustomerRepositoryInterface from "../../../domain/customer/repository/customer-repository.interface";
 import ProductFactory from "../../../domain/product/factory/product.factory";
-import ProductRepositoryInterface from "../../../domain/product/repository/product-repository.interface";
 import { TypeProduct } from "../create/create.product.dto";
 import { InputUpdateProductDto } from "./update.product.dto";
 import UpdateProductUseCase from "./update.product.usecase";
@@ -25,7 +23,7 @@ describe("Unit test update product use case", () => {
     sut = new UpdateProductUseCase(generateProductMockRepository());
   });
 
-  it("should create a product", async () => {
+  it("should update a product", async () => {
     const outputResult = await sut.execute(mockInput);
 
     expect(outputResult).toMatchObject(mockInput);

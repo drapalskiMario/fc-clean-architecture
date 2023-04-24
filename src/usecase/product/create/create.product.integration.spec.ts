@@ -1,25 +1,39 @@
-import ProductRepositoryInterface from "../../../domain/product/repository/product-repository.interface";
+import { Sequelize } from "sequelize-typescript";
 import { InputCreateProductDto, TypeProduct } from "./create.product.dto";
 import CreateProductUseCase from "./create.product.usecase";
+import ProductRepository from "../../../infrastructure/product/repository/sequelize/product.repository"
+import ProductModel from "../../../infrastructure/product/repository/sequelize/product.model";
 
 describe("Unit test create product use case", () => {
   let sut: CreateProductUseCase;
   let mockInput: InputCreateProductDto;
-  const generateProductMockRepository = () =>
-    <ProductRepositoryInterface>{
-      find: jest.fn(),
-      findAll: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-    };
+  let sequelize: Sequelize;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    sequelize = new Sequelize({
+      dialect: "sqlite",
+      storage: ":memory:",
+      logging: false,
+      sync: { force: true },
+    });
+
+    sequelize.addModels([ProductModel]);
+    await sequelize.sync();
+
     mockInput = {
       name: "Product",
       price: 59.9,
       type: TypeProduct.A,
     };
-    sut = new CreateProductUseCase(generateProductMockRepository());
+    sut = new CreateProductUseCase(new ProductRepository());
+  });
+
+  afterEach(async () => {
+    await sequelize.close();
+  });
+
+  beforeEach(() => {
+
   });
 
   it("should create a product", async () => {
